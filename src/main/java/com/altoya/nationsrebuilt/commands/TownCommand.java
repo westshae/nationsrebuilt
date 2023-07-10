@@ -43,8 +43,14 @@ public class TownCommand implements CommandExecutor {
   }
 
   private void townCreateSubCommand(Player player, String[] args) {
-    if(args.length != 2) return;
-    if (!player.hasPermission("nationsrebuilt.town.create")) return;
+    if(args.length != 2){
+      player.sendMessage("Must have 2 arguments. /town create {town-name}");
+      return;
+    }
+    if (!player.hasPermission("nationsrebuilt.town.create")){
+      player.sendMessage("No permission to run this command.");
+      return;
+    }
 
     //Load players.yml data file.
     File playersFile = new File(Bukkit.getServer().getPluginManager().getPlugin("nationsrebuilt").getDataFolder(), "towns.yml");
@@ -53,19 +59,28 @@ public class TownCommand implements CommandExecutor {
     UUID playerUUID = player.getUniqueId();
 
     Boolean hasTown =  playersData.getBoolean("players." + playerUUID.toString() + ".town.has");
-    if(hasTown) return;
+    if(hasTown){
+      player.sendMessage("You already own a town.");
+      return;
+    }
 
     //Town name must be 6-14 characters, no whitespaces.
     String townName = args[1].toString();
     Pattern pattern = Pattern.compile("(^\\w{5,15}\\S$)");
-    if(!pattern.matcher(townName).matches())return;
+    if(!pattern.matcher(townName).matches()){
+      player.sendMessage("Town names must be 6-14 characters, only letters and underscores, with no whitespace.");
+      return;
+    }
 
     //Load towns.yml data file.
     File townsFile = new File(Bukkit.getServer().getPluginManager().getPlugin("nationsrebuilt").getDataFolder(), "towns.yml");
     FileConfiguration townsData = YamlConfiguration.loadConfiguration(townsFile);
 
     //Set player/town data files with new values.
-    if(townsData.contains("factions." + townName))return;
+    if(townsData.contains("factions." + townName)){
+      player.sendMessage("This town name already exists. Choose another one.");
+      return;
+    }
     townsData.set("factions." + townName + ".name", townName);
     townsData.set("factions." + townName + ".members", playerUUID.toString());
     playersData.set("players." + playerUUID.toString() + ".town.has", true);
