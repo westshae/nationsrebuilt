@@ -3,6 +3,8 @@ package com.altoya.nationsrebuilt;
 import java.io.File;
 
 import org.bukkit.plugin.java.JavaPlugin;
+
+import com.altoya.nationsrebuilt.commands.DomainCommand;
 public class App extends JavaPlugin {
     @Override
     public void onEnable() {
@@ -10,6 +12,7 @@ public class App extends JavaPlugin {
 
         //How to register commands
         //this.getCommand("commandNameInYml").setExecutor(new ObjectWithOnCommandMethod()); 
+        this.getCommand("nationsrebuilt").setExecutor(new DomainCommand()); 
 
         //How to register eventListeners
         //this.getServer().getPluginManager().registerEvents(new ObjectWith@EventHandlers(), this);
