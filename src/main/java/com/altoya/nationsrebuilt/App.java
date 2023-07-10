@@ -5,14 +5,15 @@ import java.io.File;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.altoya.nationsrebuilt.commands.DomainCommand;
+import com.altoya.nationsrebuilt.commands.TownCommand;
 public class App extends JavaPlugin {
     @Override
     public void onEnable() {
         loadConfig();//Loads .yml
 
         //How to register commands
-        //this.getCommand("commandNameInYml").setExecutor(new ObjectWithOnCommandMethod()); 
-        this.getCommand("nationsrebuilt").setExecutor(new DomainCommand()); 
+        this.getCommand("help").setExecutor(new DomainCommand()); 
+        this.getCommand("town").setExecutor(new TownCommand());
 
         //How to register eventListeners
         //this.getServer().getPluginManager().registerEvents(new ObjectWith@EventHandlers(), this);
@@ -20,7 +21,7 @@ public class App extends JavaPlugin {
 
     public void loadConfig() {
         //Get potential config file
-        File configFile = new File(getDataFolder(), "filename.extension"); //TODO UPDATE FILENAME
+        File configFile = new File(getDataFolder(), "config.yml"); //TODO UPDATE FILENAME
 
         if(!configFile.exists()){
             //Add new defaults, path might be items.0.modelID
