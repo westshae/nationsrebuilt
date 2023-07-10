@@ -1,4 +1,4 @@
-package com.altoya.nationsrebuilt;
+package com.altoya.nationsrebuilt.examples;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

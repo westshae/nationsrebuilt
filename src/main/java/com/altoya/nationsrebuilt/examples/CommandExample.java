@@ -1,4 +1,4 @@
-package com.altoya.nationsrebuilt;
+package com.altoya.nationsrebuilt.examples;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
