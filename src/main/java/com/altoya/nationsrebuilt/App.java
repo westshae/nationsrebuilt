@@ -29,7 +29,6 @@ public class App extends JavaPlugin {
         try {
             townsData.save(townsFile);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -38,7 +37,6 @@ public class App extends JavaPlugin {
         try {
             playersData.save(playersFile);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -47,7 +45,6 @@ public class App extends JavaPlugin {
         try {
             nationsData.save(nationsFile);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -56,27 +53,6 @@ public class App extends JavaPlugin {
             //Add new defaults, path might be items.0.modelID
             // getConfig().addDefault("pathInYml", "valueToSet");
         }
-        // if(!townsFile.exists()){
-        //     try {
-        //         townsFile.;
-        //     } catch (IOException e) {
-        //         e.printStackTrace();
-        //     }
-        // }
-        // if(!playersFile.exists()){
-        //     try {
-        //         playersFile.createNewFile();
-        //     } catch (IOException e) {
-        //         e.printStackTrace();
-        //     }
-        // }
-        // if(!nationsFile.exists()){
-        //     try {
-        //         nationsFile.createNewFile();
-        //     } catch (IOException e) {
-        //         e.printStackTrace();
-        //     }
-        // }
 
 
 
