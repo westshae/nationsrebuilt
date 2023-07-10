@@ -1,10 +1,12 @@
 package com.altoya.nationsrebuilt;
 
 import java.io.File;
+import java.io.IOException;
 
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.altoya.nationsrebuilt.commands.DomainCommand;
 import com.altoya.nationsrebuilt.commands.TownCommand;
 public class App extends JavaPlugin {
     @Override
@@ -12,7 +14,6 @@ public class App extends JavaPlugin {
         loadConfig();//Loads .yml
 
         //How to register commands
-        this.getCommand("help").setExecutor(new DomainCommand()); 
         this.getCommand("town").setExecutor(new TownCommand());
 
         //How to register eventListeners
@@ -23,10 +24,61 @@ public class App extends JavaPlugin {
         //Get potential config file
         File configFile = new File(getDataFolder(), "config.yml"); //TODO UPDATE FILENAME
 
+        File townsFile = new File(getDataFolder(), "towns.yml");
+        FileConfiguration townsData = YamlConfiguration.loadConfiguration(townsFile);
+        try {
+            townsData.save(townsFile);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        File playersFile = new File(getDataFolder(), "players.yml");
+        FileConfiguration playersData = YamlConfiguration.loadConfiguration(playersFile);
+        try {
+            playersData.save(playersFile);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        File nationsFile = new File(getDataFolder(), "nations.yml");        
+        FileConfiguration nationsData = YamlConfiguration.loadConfiguration(nationsFile);
+        try {
+            nationsData.save(nationsFile);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+
         if(!configFile.exists()){
             //Add new defaults, path might be items.0.modelID
             // getConfig().addDefault("pathInYml", "valueToSet");
         }
+        // if(!townsFile.exists()){
+        //     try {
+        //         townsFile.;
+        //     } catch (IOException e) {
+        //         e.printStackTrace();
+        //     }
+        // }
+        // if(!playersFile.exists()){
+        //     try {
+        //         playersFile.createNewFile();
+        //     } catch (IOException e) {
+        //         e.printStackTrace();
+        //     }
+        // }
+        // if(!nationsFile.exists()){
+        //     try {
+        //         nationsFile.createNewFile();
+        //     } catch (IOException e) {
+        //         e.printStackTrace();
+        //     }
+        // }
+
+
 
         //Load config
         getConfig().options().copyDefaults(true);
