@@ -1,0 +1,10 @@
+main: com.altoya.nationsrebuilt.App
+name: nationsrebuilt
+version: 1
+api-version: 1.20.1
+description: BLANK DESCRIPTION
+
+commands:
+  commandName:
+    description: description
+    usage: /command {var} {var}``
