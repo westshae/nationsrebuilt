@@ -58,7 +58,7 @@ public class TownCommand implements CommandExecutor {
     }
 
     //Load players.yml data file.
-    File playersFile = new File(Bukkit.getServer().getPluginManager().getPlugin("nationsrebuilt").getDataFolder(), "towns.yml");
+    File playersFile = new File(Bukkit.getServer().getPluginManager().getPlugin("nationsrebuilt").getDataFolder(), "players.yml");
     FileConfiguration playersData = YamlConfiguration.loadConfiguration(playersFile);
 
     UUID playerUUID = player.getUniqueId();
@@ -82,12 +82,17 @@ public class TownCommand implements CommandExecutor {
     FileConfiguration townsData = YamlConfiguration.loadConfiguration(townsFile);
 
     //Set player/town data files with new values.
-    if(townsData.contains("factions." + townName)){
+    if(townsData.contains("towns." + townName)){
       player.sendMessage("This town name already exists. Choose another one.");
       return;
     }
-    townsData.set("factions." + townName + ".name", townName);
-    townsData.set("factions." + townName + ".members", new ArrayList<String>().add(playerUUID.toString()) );
+
+    ArrayList<String> memberList = new ArrayList<String>();
+    memberList.add(playerUUID.toString());
+
+    townsData.set("towns." + townName + ".name", townName);
+    townsData.set("towns." + townName + ".members", memberList);
+    townsData.set("towns." + townName + ".votes", new ArrayList<String>());
     playersData.set("players." + playerUUID.toString() + ".town.has", true);
     playersData.set("players."+playerUUID.toString()+".town.name", townName);
 
@@ -101,7 +106,6 @@ public class TownCommand implements CommandExecutor {
     } catch (IOException e) {
       e.printStackTrace();
     }
-
     player.sendMessage("Your town, \"" + townName + "\" has been created.");
   }
 
@@ -116,11 +120,11 @@ public class TownCommand implements CommandExecutor {
     }
 
     //Load players.yml data file.
-    File playersFile = new File(Bukkit.getServer().getPluginManager().getPlugin("nationsrebuilt").getDataFolder(), "towns.yml");
+    File playersFile = new File(Bukkit.getServer().getPluginManager().getPlugin("nationsrebuilt").getDataFolder(), "players.yml");
     FileConfiguration playersData = YamlConfiguration.loadConfiguration(playersFile);
 
     UUID inviteeUUID = Bukkit.getPlayer(args[1].toString()).getUniqueId();
-
+    
     boolean inviteeExists = playersData.contains("players." + inviteeUUID.toString());
 
     if(!inviteeExists) {
@@ -141,17 +145,26 @@ public class TownCommand implements CommandExecutor {
     File townsFile = new File(Bukkit.getServer().getPluginManager().getPlugin("nationsrebuilt").getDataFolder(), "towns.yml");
     FileConfiguration townsData = YamlConfiguration.loadConfiguration(townsFile);
 
-    @SuppressWarnings("unchecked")
-    ArrayList<String> currentTownVotes = (ArrayList<String>) townsData.getList("towns." + townName + ".votes");
+    ArrayList<String> currentTownVotes = (ArrayList<String>) townsData.getStringList("towns." + townName + ".votes");
+
     currentTownVotes.add("vote:" + inviteeUUID.toString());
     townsData.set("towns." + townName + ".votes", currentTownVotes);
+    
+    try {
+      townsData.save(townsFile);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    try {
+      playersData.save(playersFile);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
 
-    @SuppressWarnings("unchecked")
-    ArrayList<String> currentTownMembers = (ArrayList<String>) townsData.getList("towns." + townName + ".members");
+    ArrayList<String> currentTownMembers = (ArrayList<String>) townsData.getStringList("towns." + townName + ".members");
 
-    for(Object uuidString : currentTownMembers.toArray()){
-      if(!(uuidString instanceof String))continue;
-      UUID uuid = (UUID) uuidString;
+    for(String uuidString : currentTownMembers){
+      UUID uuid = UUID.fromString(uuidString);
       Player currentPlayer = Bukkit.getPlayer(uuid);
       currentPlayer.sendMessage("A vote to invite a new player named \"" + Bukkit.getPlayer(inviteeUUID).getName() + "\" has been added. Check /town vote.");
     }

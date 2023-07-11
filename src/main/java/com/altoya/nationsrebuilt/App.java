@@ -8,6 +8,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.altoya.nationsrebuilt.commands.TownCommand;
+import com.altoya.nationsrebuilt.events.FirstJoinEvent;
 public class App extends JavaPlugin {
     @Override
     public void onEnable() {
@@ -17,7 +18,7 @@ public class App extends JavaPlugin {
         this.getCommand("town").setExecutor(new TownCommand());
 
         //How to register eventListeners
-        //this.getServer().getPluginManager().registerEvents(new ObjectWith@EventHandlers(), this);
+        this.getServer().getPluginManager().registerEvents(new FirstJoinEvent(), this);
     }
 
     public void loadConfig() {
