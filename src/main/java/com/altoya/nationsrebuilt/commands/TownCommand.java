@@ -38,10 +38,10 @@ public class TownCommand implements CommandExecutor {
         this.townKickSubCommand(player,args);
         break;
       case "votelist":
-        this.townVoteListSubCommand(player,args);
+        this.townVoteListSubCommand(player);
         break;
       case "vote":
-        // this.townVoteSubCommand(player, args);
+        this.townVoteSubCommand(player, args);
         break;
       default:
         return false;
@@ -102,6 +102,7 @@ public class TownCommand implements CommandExecutor {
     townsData.set("towns." + townName + ".name", townName);
     townsData.set("towns." + townName + ".members", memberList);
     townsData.set("towns." + townName + ".votes", new ArrayList<String>());
+    townsData.set("towns." + townName + ".votecount", 0);
     playersData.set("players." + playerUUID.toString() + ".town.has", true);
     playersData.set("players."+playerUUID.toString()+".town.name", townName);
 
@@ -156,7 +157,10 @@ public class TownCommand implements CommandExecutor {
 
     ArrayList<String> currentTownVotes = (ArrayList<String>) townsData.getStringList("towns." + townName + ".votes");
 
-    currentTownVotes.add("invite:" + inviteeUUID.toString());
+    int townVoteCount = townsData.getInt("towns." + townName + ".votecount");
+
+    currentTownVotes.add((townVoteCount + 1) + ":invite:" + inviteeUUID.toString());
+    townsData.set("towns." + townName + ".votecount", (townVoteCount+1));
     townsData.set("towns." + townName + ".votes", currentTownVotes);
     
     try {
@@ -225,8 +229,11 @@ public class TownCommand implements CommandExecutor {
 
     ArrayList<String> currentTownVotes = (ArrayList<String>) townsData.getStringList("towns." + townName + ".votes");
 
-    currentTownVotes.add("kick:" + kickeeUUID.toString());
+    int townVoteCount = townsData.getInt("towns." + townName + ".votecount");
+
+    currentTownVotes.add((townVoteCount + 1) + ":kick:" + kickeeUUID.toString());
     townsData.set("towns." + townName + ".votes", currentTownVotes);
+    townsData.set("towns." + townName + ".votecount", (townVoteCount + 1));
     
     try {
       townsData.save(townsFile);
@@ -249,7 +256,7 @@ public class TownCommand implements CommandExecutor {
 
   }
 
-  private void townVoteListSubCommand(Player player, String[] args) {
+  private void townVoteListSubCommand(Player player) {
     if (!player.hasPermission("nationsrebuilt.town.votelist")){
       player.sendMessage("No permission to run this command.");
       return;
@@ -284,6 +291,41 @@ public class TownCommand implements CommandExecutor {
       player.sendMessage(vote);
     }
   }
+
+  private void townVoteSubCommand(Player player, String[] args) {
+    if(args.length != 3){
+      player.sendMessage("Must have 3 arguments. /town vote {vote-number} {yes-no-none}");
+      return;
+    }
+    if (!player.hasPermission("nationsrebuilt.town.vote")){
+      player.sendMessage("No permission to run this command.");
+      return;
+    }
+
+    //Load players.yml data file.
+    File playersFile = new File(Bukkit.getServer().getPluginManager().getPlugin("nationsrebuilt").getDataFolder(), "players.yml");
+    FileConfiguration playersData = YamlConfiguration.loadConfiguration(playersFile);
+
+    UUID playerUUID = player.getUniqueId();
+
+    boolean hasTown =  playersData.getBoolean("players." + playerUUID.toString() + ".town.has");
+    if(!hasTown){
+      player.sendMessage("You have no town.");
+      return;
+    }
+
+    String townName = playersData.getString("players." + playerUUID.toString() + ".town.name");
+
+    //Load towns.yml data file.
+    File townsFile = new File(Bukkit.getServer().getPluginManager().getPlugin("nationsrebuilt").getDataFolder(), "towns.yml");
+    FileConfiguration townsData = YamlConfiguration.loadConfiguration(townsFile);
+
+    ArrayList<String> currentTownVotes = (ArrayList<String>) townsData.getStringList("towns." + townName + ".votes");
+
+
+
+  }
+
 
 
 
