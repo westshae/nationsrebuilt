@@ -34,6 +34,9 @@ public class TownCommand implements CommandExecutor {
       case "help":
         this.helpSubCommand(player, args);
         break;
+      case "kick":
+        this.townKickSubCommand(player,args);
+        break;
       default:
         return false;
     }
@@ -147,7 +150,7 @@ public class TownCommand implements CommandExecutor {
 
     ArrayList<String> currentTownVotes = (ArrayList<String>) townsData.getStringList("towns." + townName + ".votes");
 
-    currentTownVotes.add("vote:" + inviteeUUID.toString());
+    currentTownVotes.add("invite:" + inviteeUUID.toString());
     townsData.set("towns." + townName + ".votes", currentTownVotes);
     
     try {
@@ -167,6 +170,76 @@ public class TownCommand implements CommandExecutor {
       UUID uuid = UUID.fromString(uuidString);
       Player currentPlayer = Bukkit.getPlayer(uuid);
       currentPlayer.sendMessage("A vote to invite a new player named \"" + Bukkit.getPlayer(inviteeUUID).getName() + "\" has been added. Check /town vote.");
+    }
+
+  }
+  
+  
+  private void townKickSubCommand(Player player, String[] args) {
+    if(args.length != 2){
+      player.sendMessage("Must have 2 arguments. /town kick {player-name}");
+      return;
+    }
+    if (!player.hasPermission("nationsrebuilt.town.kick")){
+      player.sendMessage("No permission to run this command.");
+      return;
+    }
+
+    //Load players.yml data file.
+    File playersFile = new File(Bukkit.getServer().getPluginManager().getPlugin("nationsrebuilt").getDataFolder(), "players.yml");
+    FileConfiguration playersData = YamlConfiguration.loadConfiguration(playersFile);
+
+    UUID kickeeUUID = Bukkit.getPlayer(args[1].toString()).getUniqueId();
+    
+    boolean kickeeExists = playersData.contains("players." + kickeeUUID.toString());
+
+    if(!kickeeExists) {
+      player.sendMessage("The user you are trying to kick doesn't exist.");
+      return;
+    }
+
+
+    UUID playerUUID = player.getUniqueId();
+
+    boolean hasTown =  playersData.getBoolean("players." + playerUUID.toString() + ".town.has");
+    if(!hasTown){
+      player.sendMessage("You have no town.");
+      return;
+    }
+    String townName = playersData.getString("players." + playerUUID.toString() + ".town.name");
+
+    String kickeeTownName = playersData.getString("players." + kickeeUUID.toString() + ".town.name");
+    if(!kickeeTownName.equals(townName)){
+      player.sendMessage("This user isn't a member of your town.");
+      return;
+    }
+
+    //Load towns.yml data file.
+    File townsFile = new File(Bukkit.getServer().getPluginManager().getPlugin("nationsrebuilt").getDataFolder(), "towns.yml");
+    FileConfiguration townsData = YamlConfiguration.loadConfiguration(townsFile);
+
+    ArrayList<String> currentTownVotes = (ArrayList<String>) townsData.getStringList("towns." + townName + ".votes");
+
+    currentTownVotes.add("kick:" + kickeeUUID.toString());
+    townsData.set("towns." + townName + ".votes", currentTownVotes);
+    
+    try {
+      townsData.save(townsFile);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    try {
+      playersData.save(playersFile);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    ArrayList<String> currentTownMembers = (ArrayList<String>) townsData.getStringList("towns." + townName + ".members");
+
+    for(String uuidString : currentTownMembers){
+      UUID uuid = UUID.fromString(uuidString);
+      Player currentPlayer = Bukkit.getPlayer(uuid);
+      currentPlayer.sendMessage("A vote to kick a player named \"" + Bukkit.getPlayer(kickeeUUID).getName() + "\" has been added. Check /town vote.");
     }
 
   }
