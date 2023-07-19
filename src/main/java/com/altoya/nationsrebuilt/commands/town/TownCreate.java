@@ -11,14 +11,16 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import com.altoya.nationsrebuilt.util.PlayerMessage;
+
 public class TownCreate {
   public static void townCreateSubCommand(Player player, String[] args) {
     if(args.length != 2){
-      player.sendMessage("Must have 2 arguments. /town create {town-name}");
+      PlayerMessage.error(player, "Must have 2 arguments. /town create {town-name}");
       return;
     }
     if (!player.hasPermission("nationsrebuilt.town.create")){
-      player.sendMessage("No permission to run this command.");
+      PlayerMessage.error(player, "No permission to run this command.");
       return;
     }
 
@@ -30,7 +32,7 @@ public class TownCreate {
 
     Boolean hasTown =  playersData.getBoolean("players." + playerUUID.toString() + ".town.has");
     if(hasTown){
-      player.sendMessage("You already own a town.");
+      PlayerMessage.error(player, "You already own a town.");
       return;
     }
 
@@ -38,7 +40,7 @@ public class TownCreate {
     String townName = args[1].toString();
     Pattern pattern = Pattern.compile("(^\\w{5,15}\\S$)");
     if(!pattern.matcher(townName).matches()){
-      player.sendMessage("Town names must be 6-14 characters, only letters and underscores, with no whitespace.");
+      PlayerMessage.error(player, "Town names must be 6-14 characters, only letters and underscores, with no whitespace.");
       return;
     }
 
@@ -48,7 +50,7 @@ public class TownCreate {
 
     //Set player/town data files with new values.
     if(townsData.contains("towns." + townName)){
-      player.sendMessage("This town name already exists. Choose another one.");
+      PlayerMessage.error(player,"This town name already exists. Choose another one.");
       return;
     }
 
@@ -74,7 +76,7 @@ public class TownCreate {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    player.sendMessage("Your town, \"" + townName + "\" has been created.");
+    PlayerMessage.success(player, "Your town, \"" + townName + "\" has been created.");
   }
 
 }

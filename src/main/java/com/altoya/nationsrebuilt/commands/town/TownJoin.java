@@ -10,14 +10,16 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import com.altoya.nationsrebuilt.util.PlayerMessage;
+
 public class TownJoin {
   public static void townJoinSubCommand(Player player, String[] args) {
     if (!player.hasPermission("nationsrebuilt.town.join")){
-      player.sendMessage("No permission to run this command.");
+      PlayerMessage.error(player, "No permission to run this command.");
       return;
     }
     if(args.length != 2){
-      player.sendMessage("Must have 2 arguments. /town join {town-name}");
+      PlayerMessage.error(player, "Must have 2 arguments. /town join {town-name}");
       return;
     }
     File playersFile = new File(Bukkit.getServer().getPluginManager().getPlugin("nationsrebuilt").getDataFolder(), "players.yml");
@@ -27,7 +29,7 @@ public class TownJoin {
 
     boolean hasTown = playersData.getBoolean("players." + uuid.toString() + ".town.has");
     if(hasTown){
-      player.sendMessage("You already are in a town.");
+      PlayerMessage.error(player, "You already are in a town.");
       return;
     }
 
@@ -37,14 +39,14 @@ public class TownJoin {
     String townName = args[1].toLowerCase();
 
     if(!townsData.contains("towns." + townName)){
-      player.sendMessage("The town \"" + townName + "\" doesn't exist.");
+      PlayerMessage.error(player, "The town \"" + townName + "\" doesn't exist.");
       return;
     }
 
     ArrayList<String> currentInvites = (ArrayList<String>) townsData.getStringList("towns." + townName + ".invites");
 
     if(!currentInvites.contains(uuid.toString())){
-      player.sendMessage("You don't have an invite for the town \"" + townName + "\"");
+      PlayerMessage.error(player, "You don't have an invite for the town \"" + townName + "\"");
       return;
     }
 
@@ -68,7 +70,7 @@ public class TownJoin {
     for(String uuidString : currentTownMembers){
       UUID currentUUID = UUID.fromString(uuidString);
       Player currentPlayer = Bukkit.getPlayer(currentUUID);
-      currentPlayer.sendMessage("The player " + player.getName() + " has joined the town.");
+      PlayerMessage.success(currentPlayer, "The player " + player.getName() + " has joined the town.");
     }
 
     try {

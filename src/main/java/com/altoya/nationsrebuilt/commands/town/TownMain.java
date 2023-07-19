@@ -5,13 +5,19 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.altoya.nationsrebuilt.util.PlayerMessage;
+
 public class TownMain implements CommandExecutor {
   @Override
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
     if (!command.getName().equalsIgnoreCase("town")) return true;
-    if (!sender.hasPermission("nationsrebuilt.town")) return true;
+    
     if (!(sender instanceof Player)) return true;
     Player player = (Player) sender;
+    if (!sender.hasPermission("nationsrebuilt.town")){
+      PlayerMessage.error(player, "You do not have permisson to run this command");
+      return true;
+    }
 
 
     switch (args[0].toLowerCase()) {

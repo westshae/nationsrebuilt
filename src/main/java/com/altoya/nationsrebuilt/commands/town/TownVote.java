@@ -10,14 +10,16 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import com.altoya.nationsrebuilt.util.PlayerMessage;
+
 public class TownVote {
   public static void townVoteSubCommand(Player player, String[] args) {
     if(args.length != 3){
-      player.sendMessage("Must have 3 arguments. /town vote {vote-number} {yes-no-none}");
+      PlayerMessage.error(player, "Must have 3 arguments. /town vote {vote-number} {yes-no-none}");
       return;
     }
     if (!player.hasPermission("nationsrebuilt.town.vote")){
-      player.sendMessage("No permission to run this command.");
+      PlayerMessage.error(player, "No permission to run this command.");
       return;
     }
 
@@ -29,7 +31,7 @@ public class TownVote {
 
     boolean hasTown =  playersData.getBoolean("players." + playerUUID.toString() + ".town.has");
     if(!hasTown){
-      player.sendMessage("You have no town.");
+      PlayerMessage.error(player, "You have no town.");
       return;
     }
 
@@ -55,7 +57,7 @@ public class TownVote {
     if(vote.length == 7){
       for(String stringUUID : vote[6].split("=")){
         if(UUID.fromString(stringUUID) == playerUUID){
-          player.sendMessage("You have already voted on this vote.");
+          PlayerMessage.error(player, "You have already voted on this vote.");
           return;
         }
       }  
@@ -99,7 +101,7 @@ public class TownVote {
       for(String uuidString : currentTownMembers){
         UUID uuid = UUID.fromString(uuidString);
         Player currentPlayer = Bukkit.getPlayer(uuid);
-        currentPlayer.sendMessage("A vote to " + voteType + " a player named \"" + Bukkit.getPlayer(voteUUID).getName() + "\" has succeeded. The vote has now been completed with a final vote of " + voteForYes + ":" + voteForNone + ":" + voteForNo + ".");
+        PlayerMessage.success(currentPlayer, "A vote to " + voteType + " a player named \"" + Bukkit.getPlayer(voteUUID).getName() + "\" has succeeded. The vote has now been completed with a final vote of " + voteForYes + ":" + voteForNone + ":" + voteForNo + ".");
       }
 
       switch(voteType.toLowerCase()){
@@ -116,6 +118,30 @@ public class TownVote {
     else if (totalVotes != townPlayerCount && !majorityVote){
       //Vote incomplete
       currentTownVotes.add(voteString);
+      ArrayList<String> currentTownMembers = (ArrayList<String>) townsData.getStringList("towns." + townName + ".members");
+
+      if(voteType.toLowerCase().equals("yes")){
+        for(String uuidString : currentTownMembers){
+          UUID uuid = UUID.fromString(uuidString);
+          Player currentPlayer = Bukkit.getPlayer(uuid);
+          PlayerMessage.success(currentPlayer, currentPlayer.getName() + " has voted " + voteType + " for vote number " + voteNumber);
+        }
+  
+      } else if (voteType.toLowerCase().equals("none")){
+        for(String uuidString : currentTownMembers){
+          UUID uuid = UUID.fromString(uuidString);
+          Player currentPlayer = Bukkit.getPlayer(uuid);
+          PlayerMessage.success(currentPlayer, currentPlayer.getName() + " has voted " + voteType + " for vote number " + voteNumber);
+        }
+  
+      } else if (voteType.toLowerCase().equals("no")){
+        for(String uuidString : currentTownMembers){
+          UUID uuid = UUID.fromString(uuidString);
+          Player currentPlayer = Bukkit.getPlayer(uuid);
+          PlayerMessage.error(currentPlayer, currentPlayer.getName() + " has voted " + voteType + " for vote number " + voteNumber);
+        }
+  
+      }
     } 
     else if (totalVotes == townPlayerCount && !majorityVote){
       //Vote fails permanently
@@ -124,7 +150,7 @@ public class TownVote {
       for(String uuidString : currentTownMembers){
         UUID uuid = UUID.fromString(uuidString);
         Player currentPlayer = Bukkit.getPlayer(uuid);
-        currentPlayer.sendMessage("A vote to " + voteType + " a player named \"" + Bukkit.getPlayer(voteUUID).getName() + "\" has failed. The vote has now been removed with a final vote of " + voteForYes + ":" + voteForNone + ":" + voteForNo + ".");
+        PlayerMessage.error(currentPlayer, "A vote to " + voteType + " a player named \"" + Bukkit.getPlayer(voteUUID).getName() + "\" has failed. The vote has now been removed with a final vote of " + voteForYes + ":" + voteForNone + ":" + voteForNo + ".");
       }
   
     }

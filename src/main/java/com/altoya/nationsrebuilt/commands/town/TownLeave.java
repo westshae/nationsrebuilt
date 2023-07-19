@@ -10,10 +10,12 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import com.altoya.nationsrebuilt.util.PlayerMessage;
+
 public class TownLeave {
   public static void townLeaveSubCommand(Player player, String[] args) {
     if (!player.hasPermission("nationsrebuilt.town.leave")){
-      player.sendMessage("No permission to run this command.");
+      PlayerMessage.error(player, "No permission to run this command.");
       return;
     }
     File playersFile = new File(Bukkit.getServer().getPluginManager().getPlugin("nationsrebuilt").getDataFolder(), "players.yml");
@@ -23,7 +25,7 @@ public class TownLeave {
 
     boolean hasTown = playersData.getBoolean("players." + uuid.toString() + ".town.has");
     if(!hasTown){
-      player.sendMessage("You aren't in a town.");
+      PlayerMessage.error(player, "You aren't in a town.");
       return;
     }
 
@@ -39,7 +41,7 @@ public class TownLeave {
 
     if(memberCount == 1){
       townsData.set("towns." + townName , null);
-      Bukkit.broadcastMessage(townName + " has been disbanded.");
+      PlayerMessage.broadcast(townName + " has been disbanded.");
     } else {
       memberList.remove(uuid.toString());
       memberCount -= 1;
@@ -51,7 +53,7 @@ public class TownLeave {
         for(String uuidString : memberList){
           UUID currentUUID = UUID.fromString(uuidString);
           Player currentPlayer = Bukkit.getPlayer(currentUUID);
-          currentPlayer.sendMessage("The player " + player.getName() + " has left the town.");
+          PlayerMessage.error(currentPlayer, "The player " + player.getName() + " has left the town.");
         }  
       }
     }

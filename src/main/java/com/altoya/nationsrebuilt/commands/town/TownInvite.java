@@ -10,14 +10,16 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import com.altoya.nationsrebuilt.util.PlayerMessage;
+
 public class TownInvite {
   public static void townInviteSubCommand(Player player, String[] args) {
     if(args.length != 2){
-      player.sendMessage("Must have 2 arguments. /town invite {player-name}");
+      PlayerMessage.error(player, "Must have 2 arguments. /town invite {player-name}");
       return;
     }
     if (!player.hasPermission("nationsrebuilt.town.invite")){
-      player.sendMessage("No permission to run this command.");
+      PlayerMessage.error(player, "No permission to run this command.");
       return;
     }
 
@@ -30,7 +32,7 @@ public class TownInvite {
     boolean inviteeExists = playersData.contains("players." + inviteeUUID.toString());
 
     if(!inviteeExists) {
-      player.sendMessage("The user you are trying to invite doesn't exist.");
+      PlayerMessage.error(player, "The user you are trying to invite doesn't exist.");
       return;
     }
 
@@ -38,7 +40,7 @@ public class TownInvite {
 
     boolean hasTown =  playersData.getBoolean("players." + playerUUID.toString() + ".town.has");
     if(!hasTown){
-      player.sendMessage("You have no town.");
+      PlayerMessage.error(player,"You have no town.");
       return;
     }
     String townName = playersData.getString("players." + playerUUID.toString() + ".town.name");
@@ -50,7 +52,7 @@ public class TownInvite {
     ArrayList<String> currentTownMembers = (ArrayList<String>) townsData.getStringList("towns." + townName + ".members");
     for(String currentUUID : currentTownMembers){
       if(currentUUID.equals(inviteeUUID.toString())){
-        player.sendMessage("This user is already in this town.");
+        PlayerMessage.error(player,"This user is already in this town.");
         return;
       }
     }
@@ -58,7 +60,7 @@ public class TownInvite {
     ArrayList<String> currentInvites = (ArrayList<String>) townsData.getStringList("towns." + townName + ".invites");
     for(String currentUUID : currentInvites){
       if(currentUUID.equals(inviteeUUID.toString())){
-        player.sendMessage("This player already has an invite.");
+        PlayerMessage.error(player,"This player already has an invite.");
         return;
       }
     }
@@ -86,7 +88,7 @@ public class TownInvite {
     for(String uuidString : currentTownMembers){
       UUID uuid = UUID.fromString(uuidString);
       Player currentPlayer = Bukkit.getPlayer(uuid);
-      currentPlayer.sendMessage("A vote to invite a new player named \"" + Bukkit.getPlayer(inviteeUUID).getName() + "\" has been added. Check /town votelist.");
+      PlayerMessage.success(currentPlayer, "A vote to invite a new player named \"" + Bukkit.getPlayer(inviteeUUID).getName() + "\" has been added. Check /town votelist.");
     }
   }
 

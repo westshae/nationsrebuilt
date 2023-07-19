@@ -7,6 +7,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
+import com.altoya.nationsrebuilt.util.PlayerMessage;
+
 public class TownVoteConfirmations {
   public static void voteInviteConfirmed(String townName, UUID uuid, FileConfiguration townsData){
     ArrayList<String> currentTownInvites = (ArrayList<String>) townsData.getStringList("towns." + townName + ".invites");
@@ -14,7 +16,7 @@ public class TownVoteConfirmations {
     currentTownInvites.add(uuid.toString());
     townsData.set("towns." + townName + ".invites", currentTownInvites);
     Player invitee = Bukkit.getPlayer(uuid);
-    invitee.sendMessage("You have been invited to the town \"" + townName + "\".");
+    PlayerMessage.success(invitee, "You have been invited to the town \"" + townName + "\".");
   }
 
   public static void voteKickConfirmed(String townName, UUID uuid, FileConfiguration townsData, FileConfiguration playersData){
@@ -28,7 +30,7 @@ public class TownVoteConfirmations {
     playersData.set("players." + uuid.toString() + ".town", null);
 
     Player kickee = Bukkit.getPlayer(uuid);
-    kickee.sendMessage("You have been kicked from the town \"" + townName + "\".");
+    PlayerMessage.error(kickee, "You have been kicked from the town \"" + townName + "\".");
   }
 
 }

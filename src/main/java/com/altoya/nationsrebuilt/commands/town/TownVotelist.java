@@ -9,10 +9,12 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import com.altoya.nationsrebuilt.util.PlayerMessage;
+
 public class TownVotelist {
   public static void townVoteListSubCommand(Player player) {
     if (!player.hasPermission("nationsrebuilt.town.votelist")){
-      player.sendMessage("No permission to run this command.");
+      PlayerMessage.error(player, "No permission to run this command.");
       return;
     }
 
@@ -24,7 +26,7 @@ public class TownVotelist {
 
     boolean hasTown =  playersData.getBoolean("players." + playerUUID.toString() + ".town.has");
     if(!hasTown){
-      player.sendMessage("You have no town.");
+      PlayerMessage.error(player, "You have no town.");
       return;
     }
 
@@ -37,7 +39,7 @@ public class TownVotelist {
     ArrayList<String> currentTownVotes = (ArrayList<String>) townsData.getStringList("towns." + townName + ".votes");
 
     if(currentTownVotes.size() == 0){
-      player.sendMessage("There are no votes available in your town.");
+      PlayerMessage.error(player, "There are no votes available in your town.");
       return;
     }
 
