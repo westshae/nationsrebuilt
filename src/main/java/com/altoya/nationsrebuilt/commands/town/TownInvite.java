@@ -51,8 +51,8 @@ public class TownInvite {
 
     int townVoteCount = townsData.getInt("towns." + townName + ".votecount");
 
-    currentTownVotes.add((townVoteCount + 1) + ":invite:" + inviteeUUID.toString() + ":1:0:0:" + playerUUID.toString());
-    townsData.set("towns." + townName + ".votecount", (townVoteCount+1));
+    currentTownVotes.add((townVoteCount+1)+ ":invite:" + inviteeUUID.toString() + ":0:0:0:");
+    townsData.set("towns." + townName + ".votecount", townVoteCount);
     townsData.set("towns." + townName + ".votes", currentTownVotes);
     
     try {
@@ -71,7 +71,7 @@ public class TownInvite {
     for(String uuidString : currentTownMembers){
       UUID uuid = UUID.fromString(uuidString);
       Player currentPlayer = Bukkit.getPlayer(uuid);
-      currentPlayer.sendMessage("A vote to invite a new player named \"" + Bukkit.getPlayer(inviteeUUID).getName() + "\" has been added. Check /town vote.");
+      currentPlayer.sendMessage("A vote to invite a new player named \"" + Bukkit.getPlayer(inviteeUUID).getName() + "\" has been added. Check /town votelist.");
     }
   }
 

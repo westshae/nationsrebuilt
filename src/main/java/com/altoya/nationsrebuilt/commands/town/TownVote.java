@@ -52,11 +52,13 @@ public class TownVote {
     }
     if(vote == null || voteForRemoval == null) return;
     currentTownVotes.remove(voteForRemoval);
-    for(String stringUUID : vote[6].split("=")){
-      if(UUID.fromString(stringUUID) == playerUUID){
-        player.sendMessage("You have already voted on this vote.");
-        return;
-      }
+    if(vote.length == 7){
+      for(String stringUUID : vote[6].split("=")){
+        if(UUID.fromString(stringUUID) == playerUUID){
+          player.sendMessage("You have already voted on this vote.");
+          return;
+        }
+      }  
     }
 
     int voteNumber = Integer.parseInt(vote[0]);
@@ -66,7 +68,12 @@ public class TownVote {
     int voteForYes = Integer.parseInt(vote[3]);
     int voteForNone = Integer.parseInt(vote[4]);
     int voteForNo = Integer.parseInt(vote[5]);
-    vote[6] += "=" + playerUUID.toString();
+    String votePlayers = "";
+    if(vote.length != 7){
+      votePlayers += playerUUID.toString();
+    } else {
+      vote[6] += "=" + playerUUID.toString();
+    }
 
 
     String playerVote = args[2];
@@ -78,7 +85,7 @@ public class TownVote {
       voteForNo += 1;
     }
 
-    String voteString = voteNumber + ":" + voteType + ":" + voteUUID.toString() + ":" + voteForYes  + ":" + voteForNone + ":" + voteForNo + ":" + vote[6];
+    String voteString = voteNumber + ":" + voteType + ":" + voteUUID.toString() + ":" + voteForYes  + ":" + voteForNone + ":" + voteForNo + ":" + votePlayers;
 
     int townPlayerCount = townsData.getInt("towns." + townName + "membercount");
     int totalVotes = voteForYes + voteForNone + voteForNo;

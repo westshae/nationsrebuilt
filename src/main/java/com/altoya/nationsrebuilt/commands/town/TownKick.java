@@ -58,7 +58,7 @@ public class TownKick {
 
     int townVoteCount = townsData.getInt("towns." + townName + ".votecount");
 
-    currentTownVotes.add((townVoteCount + 1) + ":kick:" + kickeeUUID.toString() + ":1:0:0:" + playerUUID.toString());
+    currentTownVotes.add((townVoteCount + 1) + ":kick:" + kickeeUUID.toString() + ":0:0:0:");
     townsData.set("towns." + townName + ".votes", currentTownVotes);
     townsData.set("towns." + townName + ".votecount", (townVoteCount + 1));
     
@@ -78,7 +78,7 @@ public class TownKick {
     for(String uuidString : currentTownMembers){
       UUID uuid = UUID.fromString(uuidString);
       Player currentPlayer = Bukkit.getPlayer(uuid);
-      currentPlayer.sendMessage("A vote to kick a player named \"" + Bukkit.getPlayer(kickeeUUID).getName() + "\" has been added. Check /town vote.");
+      currentPlayer.sendMessage("A vote to kick a player named \"" + Bukkit.getPlayer(kickeeUUID).getName() + "\" has been added. Check /town votelist.");
     }
 
   }
