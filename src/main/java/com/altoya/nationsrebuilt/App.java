@@ -7,7 +7,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.altoya.nationsrebuilt.commands.TownCommand;
+import com.altoya.nationsrebuilt.commands.town.TownMain;
 import com.altoya.nationsrebuilt.events.FirstJoinEvent;
 public class App extends JavaPlugin {
     @Override
@@ -15,7 +15,7 @@ public class App extends JavaPlugin {
         loadConfig();//Loads .yml
 
         //How to register commands
-        this.getCommand("town").setExecutor(new TownCommand());
+        this.getCommand("town").setExecutor(new TownMain());
 
         //How to register eventListeners
         this.getServer().getPluginManager().registerEvents(new FirstJoinEvent(), this);
