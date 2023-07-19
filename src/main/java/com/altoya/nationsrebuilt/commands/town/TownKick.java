@@ -37,6 +37,11 @@ public class TownKick {
 
     UUID playerUUID = player.getUniqueId();
 
+    if(kickeeUUID.toString().equals(playerUUID.toString())){
+      player.sendMessage("You cannot kick yourself. Use /town leave");
+      return;
+    }
+
     boolean hasTown =  playersData.getBoolean("players." + playerUUID.toString() + ".town.has");
     if(!hasTown){
       player.sendMessage("You have no town.");
