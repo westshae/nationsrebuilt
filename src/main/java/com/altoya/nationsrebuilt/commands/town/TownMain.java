@@ -36,6 +36,9 @@ public class TownMain implements CommandExecutor {
       case "join":
         TownJoin.townJoinSubCommand(player, args);
         break;
+      case "leave":
+        TownLeave.townLeaveSubCommand(player, args);
+        break;
       default:
         return false;
     }
