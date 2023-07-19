@@ -47,6 +47,23 @@ public class TownInvite {
     File townsFile = new File(Bukkit.getServer().getPluginManager().getPlugin("nationsrebuilt").getDataFolder(), "towns.yml");
     FileConfiguration townsData = YamlConfiguration.loadConfiguration(townsFile);
 
+    ArrayList<String> currentTownMembers = (ArrayList<String>) townsData.getStringList("towns." + townName + ".members");
+    for(String currentUUID : currentTownMembers){
+      if(currentUUID.equals(inviteeUUID.toString())){
+        player.sendMessage("This user is already in this town.");
+        return;
+      }
+    }
+
+    ArrayList<String> currentInvites = (ArrayList<String>) townsData.getStringList("towns." + townName + ".invites");
+    for(String currentUUID : currentInvites){
+      if(currentUUID.equals(inviteeUUID.toString())){
+        player.sendMessage("This player already has an invite.");
+        return;
+      }
+    }
+
+
     ArrayList<String> currentTownVotes = (ArrayList<String>) townsData.getStringList("towns." + townName + ".votes");
 
     int townVoteCount = townsData.getInt("towns." + townName + ".votecount");
@@ -65,8 +82,6 @@ public class TownInvite {
     } catch (IOException e) {
       e.printStackTrace();
     }
-
-    ArrayList<String> currentTownMembers = (ArrayList<String>) townsData.getStringList("towns." + townName + ".members");
 
     for(String uuidString : currentTownMembers){
       UUID uuid = UUID.fromString(uuidString);
